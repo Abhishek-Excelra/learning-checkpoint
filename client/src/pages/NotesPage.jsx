@@ -1,15 +1,52 @@
+import { useState, useEffect, useCallback } from 'react';
 import { useApp } from '../context/AppContext';
-import { FileText, Save } from 'lucide-react';
+import { FileText, Save, CheckCircle } from 'lucide-react';
 
 function NotesPage() {
-  const { notes, setNotes } = useApp();
+  const { notes, updateNotes } = useApp();
+  const [localNotes, setLocalNotes] = useState(notes);
+  const [isSaving, setIsSaving] = useState(false);
+  const [lastSaved, setLastSaved] = useState(null);
+
+  // Update local notes when context notes change
+  useEffect(() => {
+    setLocalNotes(notes);
+  }, [notes]);
+
+  // Debounced save function
+  const debouncedSave = useCallback(
+    debounce(async (content) => {
+      setIsSaving(true);
+      try {
+        await updateNotes(content);
+        setLastSaved(new Date());
+      } catch (error) {
+        console.error('Failed to save notes:', error);
+      } finally {
+        setIsSaving(false);
+      }
+    }, 1000),
+    [updateNotes]
+  );
 
   const handleNotesChange = (e) => {
-    setNotes(e.target.value);
+    const newContent = e.target.value;
+    setLocalNotes(newContent);
+    debouncedSave(newContent);
   };
 
-  const lastSaved = localStorage.getItem('lc_notes_timestamp');
-  const lastSavedDate = lastSaved ? new Date(lastSaved).toLocaleString() : null;
+  // Simple debounce function
+  function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  }
 
   return (
     <div className="h-full flex flex-col">
@@ -22,18 +59,32 @@ function NotesPage() {
               <h1 className="text-2xl font-bold text-neutral-900">Notes</h1>
               <p className="text-neutral-600 mt-1">
                 Your personal learning notes
-                {lastSavedDate && (
+                {lastSaved && (
                   <span className="text-sm text-neutral-500 ml-2">
-                    • Last saved: {lastSavedDate}
+                    • Last saved: {lastSaved.toLocaleString()}
                   </span>
                 )}
               </p>
             </div>
           </div>
           
-          <div className="flex items-center space-x-2 text-sm text-neutral-500">
-            <Save className="h-4 w-4" />
-            <span>Auto-saved locally</span>
+          <div className="flex items-center space-x-2 text-sm">
+            {isSaving ? (
+              <>
+                <Save className="h-4 w-4 text-blue-500 animate-pulse" />
+                <span className="text-blue-500">Saving...</span>
+              </>
+            ) : lastSaved ? (
+              <>
+                <CheckCircle className="h-4 w-4 text-green-500" />
+                <span className="text-green-500">Saved to database</span>
+              </>
+            ) : (
+              <>
+                <Save className="h-4 w-4 text-neutral-500" />
+                <span className="text-neutral-500">Auto-save enabled</span>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -42,7 +93,7 @@ function NotesPage() {
       <div className="flex-1 p-6">
         <div className="h-full">
           <textarea
-            value={notes}
+            value={localNotes}
             onChange={handleNotesChange}
             placeholder="Start writing your learning notes here...
 
@@ -52,7 +103,7 @@ You can use this space to:
 • Write code snippets and examples
 • Plan your next learning steps
 
-Your notes are automatically saved locally and will persist across sessions."
+Your notes are automatically saved to the database and will persist across sessions."
             className="w-full h-full p-4 border border-neutral-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm leading-relaxed"
           />
         </div>

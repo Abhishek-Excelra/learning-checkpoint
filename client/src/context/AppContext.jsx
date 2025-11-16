@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
-import { categoriesAPI, questionsAPI } from '../services/api';
+import { categoriesAPI, questionsAPI, notesAPI } from '../services/api';
 
 // Initial state
 const initialState = {
@@ -9,7 +9,7 @@ const initialState = {
   selectedCategory: null,
   loading: false,
   error: null,
-  notes: localStorage.getItem('lc_notes') || '',
+  notes: '',
 };
 
 // Action types
@@ -112,9 +112,6 @@ const appReducer = (state, action) => {
       return { ...state, favoriteQuestions: action.payload, loading: false };
     
     case ActionTypes.SET_NOTES:
-      // Save to localStorage
-      localStorage.setItem('lc_notes', action.payload);
-      localStorage.setItem('lc_notes_timestamp', new Date().toISOString());
       return { ...state, notes: action.payload };
     
     default:
@@ -129,9 +126,11 @@ const AppContext = createContext();
 export const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
-  // Load categories on mount
+  // Load categories and notes on mount
   useEffect(() => {
     loadCategories();
+    loadNotes();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Load selected category from localStorage
@@ -270,9 +269,24 @@ export const AppProvider = ({ children }) => {
     dispatch({ type: ActionTypes.SET_SELECTED_CATEGORY, payload: category });
   };
 
-  const setNotes = (notes) => {
-    dispatch({ type: ActionTypes.SET_NOTES, payload: notes });
-  };
+  const loadNotes = useCallback(async () => {
+    try {
+      const response = await notesAPI.get();
+      dispatch({ type: ActionTypes.SET_NOTES, payload: response.data.data.content });
+    } catch (error) {
+      dispatch({ type: ActionTypes.SET_ERROR, payload: error.response?.data?.message || error.message });
+    }
+  }, []);
+
+  const updateNotes = useCallback(async (content) => {
+    try {
+      await notesAPI.update(content);
+      dispatch({ type: ActionTypes.SET_NOTES, payload: content });
+    } catch (error) {
+      dispatch({ type: ActionTypes.SET_ERROR, payload: error.response?.data?.message || error.message });
+      throw error;
+    }
+  }, []);
 
   const clearError = () => {
     dispatch({ type: ActionTypes.SET_ERROR, payload: null });
@@ -292,7 +306,8 @@ export const AppProvider = ({ children }) => {
     reorderQuestions,
     loadFavoriteQuestions,
     setSelectedCategory,
-    setNotes,
+    loadNotes,
+    updateNotes,
     clearError,
   };
 

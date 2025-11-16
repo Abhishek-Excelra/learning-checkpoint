@@ -50,6 +50,12 @@ export const questionsAPI = {
   getFavorites: () => api.get('/questions/favorites'),
 };
 
+// Notes API
+export const notesAPI = {
+  get: (userId = 'default-user') => api.get(`/notes?userId=${userId}`),
+  update: (content, userId = 'default-user') => api.put(`/notes?userId=${userId}`, { content }),
+};
+
 // Health check
 export const healthAPI = {
   check: () => api.get('/health'),

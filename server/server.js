@@ -3,6 +3,7 @@ import cors from 'cors';
 import connectDB from './config/database.js';
 import categoryRoutes from './routes/categories.js';
 import questionRoutes from './routes/questions.js';
+import noteRoutes from './routes/notes.js';
 
 import 'dotenv/config';
 
@@ -27,6 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/api/categories', categoryRoutes);
 app.use('/api/questions', questionRoutes);
+app.use('/api/notes', noteRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
