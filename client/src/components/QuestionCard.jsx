@@ -114,7 +114,7 @@ function QuestionCard({ question, dragHandleProps, isDragging, showCategory = tr
               autoFocus
             />
           ) : (
-            <p className={`text-neutral-900 text-sm leading-relaxed ${question.completed ? 'line-through text-neutral-500' : ''}`}>
+            <p className={`text-neutral-900 text-sm leading-relaxed ${question.completed ? 'text-neutral-500' : ''}`}>
               {question.questionText}
             </p>
           )}
