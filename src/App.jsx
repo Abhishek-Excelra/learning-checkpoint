@@ -3,7 +3,6 @@ import Header from './components/Header';
 import Sidebar from './components/Sidebar';
 import ChecklistView from './components/ChecklistView';
 import NotesView from './components/NotesView';
-import AdminView from './components/AdminView';
 
 function AppContent() {
   const [activeView, setActiveView] = useState('javascript');
@@ -14,8 +13,6 @@ function AppContent() {
         return <ChecklistView />;
       case 'notes':
         return <NotesView />;
-      case 'admin':
-        return <AdminView />;
       case 'node':
       case 'django':
         return (
