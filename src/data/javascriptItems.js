@@ -95,6 +95,8 @@ export const javascriptLearningPlan = [
     day: 11,
     title: "Algorithms in JS",
     topics: [
+      "Write your own map/filter/reduce",
+      "Polifeel",
       "Two pointers, sliding window",
       "Recursion patterns"
     ]
@@ -133,13 +135,13 @@ export const getTotalTopics = () => {
 export const getDayProgress = (dayNumber, completedTopics) => {
   const day = javascriptLearningPlan.find(d => d.day === dayNumber);
   if (!day) return { completed: 0, total: 0, percentage: 0 };
-  
+
   const dayTopics = day.topics.length;
   const dayCompleted = day.topics.filter((_, index) => {
     const topicId = `day${dayNumber}_topic${index}`;
     return completedTopics[topicId];
   }).length;
-  
+
   return {
     completed: dayCompleted,
     total: dayTopics,
@@ -150,7 +152,7 @@ export const getDayProgress = (dayNumber, completedTopics) => {
 export const getOverallProgress = (completedTopics) => {
   const totalTopics = getTotalTopics();
   const completedCount = Object.keys(completedTopics).filter(key => completedTopics[key]).length;
-  
+
   return {
     completed: completedCount,
     total: totalTopics,
