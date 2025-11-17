@@ -1,13 +1,43 @@
 # Learning Checkpoint
 
-A modern, production-quality React application for organizing and managing learning resources across different programming languages and technologies.
+A modern, full-stack learning tracker application with category-based questions, built with Node.js, Express, MongoDB, React, and Vite.
 
 ## 🎯 Project Overview
 
-Learning Checkpoint is a modular learning resource management system built with React and Vite. It provides a clean, intuitive interface for browsing learning materials, managing favorites, and taking notes. The application is designed with extensibility in mind, making it easy to add new language components while maintaining a consistent design system.
+Learning Checkpoint is a comprehensive learning resource management system featuring a Node.js backend with MongoDB and a React frontend. It provides CRUD operations for categories and questions, drag-and-drop reordering, favorites system, completion tracking, and database-stored notes.
 
-# if mongoDB not workng then 
-docker start learning-checkpoint-mongo
+## 🐳 Quick Start with Docker (Recommended)
+
+The easiest way to run the entire application:
+
+```bash
+# Start everything with one command
+./start.sh
+
+# Stop everything
+./stop.sh
+```
+
+**Access the application:**
+- 🌐 **Frontend**: http://localhost:8080
+- 🔌 **Backend API**: http://localhost:5000
+- 🗄️ **MongoDB**: localhost:27017
+
+## 🚀 Docker Commands
+
+```bash
+# Start all services
+docker compose up -d
+
+# View logs
+docker compose logs -f
+
+# Stop all services
+docker compose down
+
+# Rebuild and start
+docker compose up --build -d
+```
 
 
 ## Features with AI (Work in progress)

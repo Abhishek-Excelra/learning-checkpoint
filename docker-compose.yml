@@ -1,0 +1,57 @@
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:latest
+    container_name: learning-checkpoint-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_DATABASE: learning-checkpoint
+    networks:
+      - learning-checkpoint-network
+
+  # Backend API
+  backend:
+    build: 
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: learning-checkpoint-backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongodb:27017/learning-checkpoint
+      - PORT=5000
+      - CLIENT_URL=http://localhost:8080
+    depends_on:
+      - mongodb
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    networks:
+      - learning-checkpoint-network
+
+  # Frontend React App
+  frontend:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: learning-checkpoint-frontend
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    networks:
+      - learning-checkpoint-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  learning-checkpoint-network:
+    driver: bridge
