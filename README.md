@@ -6,6 +6,17 @@ A modern, production-quality React application for organizing and managing learn
 
 Learning Checkpoint is a modular learning resource management system built with React and Vite. It provides a clean, intuitive interface for browsing learning materials, managing favorites, and taking notes. The application is designed with extensibility in mind, making it easy to add new language components while maintaining a consistent design system.
 
+# if mongoDB not workng then 
+docker start learning-checkpoint-mongo
+
+
+## Features with AI (Work in progress)
+
+1. When a user doesn't know answer of specific question in that case it will click on beside icon of that question and it will send that question to AI and AI will give answer to that question.
+
+2 User takees note in simple text and once user click on generate .md file that particular text will be generated to .md file in required format. 
+
+
 ## ✨ Features
 
 ### Backend
@@ -22,6 +33,7 @@ Learning Checkpoint is a modular learning resource management system built with 
 - **@dnd-kit** - Drag and drop functionality
 - **Axios** - HTTP client
 - **Lucide React** - Icons
+
 
 ## Project Structure
 
